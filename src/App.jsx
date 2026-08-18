@@ -61,15 +61,6 @@ function App() {
 
 
 
-    setCheckedCard([...checkedCard, pokemon])
-    let currentScore = score
-    setScore(currentScore + 1)
-    if (currentScore + 1 >= bestScore) {
-      setBestScore(currentScore + 1)
-    }
-    if (currentScore + 1 === pokemonList.length) {
-      setIsWinning(true)
-    }
     
     async function animateCards(pokemon) {
       setLastClick(pokemon)
@@ -84,6 +75,16 @@ function App() {
       setIsSlidingIn(false)
     }
     animateCards(pokemon)
+
+    setCheckedCard([...checkedCard, pokemon])
+    let currentScore = score
+    setScore(currentScore + 1)
+    if (currentScore + 1 >= bestScore) {
+      setBestScore(currentScore + 1)
+    }
+    if (currentScore + 1 === pokemonList.length) {
+      setIsWinning(true)
+    }
   }
 
   async function onResetGame() {
