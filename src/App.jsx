@@ -1,120 +1,90 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
+import { useEffect, useState } from 'react'
 import './App.css'
+import { fetchPokemons } from './utils/fetch'
+import { DisplayCards } from './components/diplayCards'
+import Counter from './components/counter'
+import shuffle from './utils/shuffle'
+import { ResetButton } from './components/button'
+import Home from './components/home'
+import Game from './components/game'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [isStarted, setIsStarted] = useState(false)
 
+  const [pokemonList , setPokemonList] =  useState([])
+  const [isLoading , setIsLoading] =  useState(true)
+  const [error , setError] =  useState(null)
+
+  const [score , setScore] =  useState(0)
+  const [bestScore , setBestScore] =  useState(0)
+  
+  const [checkedCard , setCheckedCard] =  useState([])
+  
+  const [isGameOver , setIsGameOver] =  useState(false)
+  const [isWinning , setIsWinning] =  useState(false)
+
+  const [resetGame, setResetGame] = useState(false)
+
+  
+  useEffect(()=> {
+    async function getPokemon() {
+      const {data , isLoading, error} =  await fetchPokemons()
+      setPokemonList(data)
+      setIsLoading(isLoading)
+      setError(error)
+    }
+    getPokemon()
+  },
+  [resetGame]
+  )
+
+  function onStartGame() {
+    setIsStarted(true)
+  }
+
+  function onCardClick(pokemon) {
+    if (isGameOver) {
+      return
+    }
+    if (checkedCard.includes(pokemon)) {
+      setIsGameOver(true)
+      return
+    }
+    setCheckedCard([...checkedCard, pokemon])
+    let currentScore = score
+    setScore(currentScore + 1)
+    if (currentScore + 1 >= bestScore) {
+      setBestScore(currentScore + 1)
+    }
+    if (currentScore + 1 === pokemonList.length) {
+      setIsWinning(true)
+    }
+    setPokemonList(shuffle(pokemonList))
+  }
+
+  function onResetGame() {
+    setScore(0)
+    setCheckedCard([])
+    setIsGameOver(false)
+    setIsWinning(false)
+    setResetGame(!resetGame)
+  }
+  
   return (
     <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
+    {!isStarted ? 
+    <Home onStartGame={onStartGame}/> :
+    <Game 
+      isLoading={isLoading} 
+      pokemonList={pokemonList} 
+      onCardClick={onCardClick} 
+      score={score} 
+      bestScore={bestScore} 
+      onResetGame={onResetGame}
+      isWinning={isWinning}
+      isGameOver={isGameOver}
+      error={error}
+      /> }
     </>
   )
 }
