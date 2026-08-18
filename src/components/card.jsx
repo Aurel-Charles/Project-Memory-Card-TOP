@@ -1,12 +1,12 @@
-export default function Card({pokemon, onCardClick}) {
-    // console.log(pokemon);
-
+export default function Card({pokemon, onCardClick , lastClick, isSlidingOut,isSlidingIn , index, isGameOver}) {
     let typeOne = pokemon.types[0].type.name
     let typeTwo = pokemon.types[1]?.type.name
 
-
     return(
-        <div className="card" onClick={()=> onCardClick(pokemon.name) }>
+        <div 
+            style={{animationDelay: `${(9 - index) * 0.05}s`}} 
+            className={`card ${!isGameOver && lastClick === pokemon.name ? 'check' : ''} ${isGameOver && lastClick === pokemon.name ? 'wrong' : ''} ${isSlidingOut ? 'sliding-out' : ''} ${isSlidingIn ? 'sliding-in' : ''} `} 
+                      onClick={()=> onCardClick(pokemon.name) }>
             <img className="card-img" src={pokemon.sprites.front_default} alt={pokemon.name} />
             <div className="card-infos">
                 <h2 className="pokemon-name">{pokemon.name}</h2>

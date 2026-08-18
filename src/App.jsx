@@ -1,16 +1,13 @@
 import { useEffect, useState } from 'react'
-import './App.css'
+import './css/App.css'
 import { fetchPokemons } from './utils/fetch'
-import { DisplayCards } from './components/diplayCards'
-import Counter from './components/counter'
 import shuffle from './utils/shuffle'
-import { ResetButton } from './components/button'
 import Home from './components/home'
 import Game from './components/game'
+import { wait } from './utils/helper'
 
 function App() {
   const [isStarted, setIsStarted] = useState(false)
-
   const [pokemonList , setPokemonList] =  useState([])
   const [isLoading , setIsLoading] =  useState(true)
   const [error , setError] =  useState(null)
@@ -19,6 +16,12 @@ function App() {
   const [bestScore , setBestScore] =  useState(0)
   
   const [checkedCard , setCheckedCard] =  useState([])
+  const [lastClick, setLastClick] = useState(null)
+  const [isSlidingOut, setIsSlidingOut] = useState(false)
+  const [isSlidingIn, setIsSlidingIn] = useState(true)
+  const [isVanishing, setIsVanishing] = useState(false)
+
+
   
   const [isGameOver , setIsGameOver] =  useState(false)
   const [isWinning , setIsWinning] =  useState(false)
@@ -38,7 +41,11 @@ function App() {
   [resetGame]
   )
 
-  function onStartGame() {
+
+
+  async function onStartGame() {
+    setIsVanishing(true)
+    await wait(500)
     setIsStarted(true)
   }
 
@@ -47,9 +54,13 @@ function App() {
       return
     }
     if (checkedCard.includes(pokemon)) {
+      setLastClick(pokemon)
       setIsGameOver(true)
       return
     }
+
+
+
     setCheckedCard([...checkedCard, pokemon])
     let currentScore = score
     setScore(currentScore + 1)
@@ -59,21 +70,41 @@ function App() {
     if (currentScore + 1 === pokemonList.length) {
       setIsWinning(true)
     }
-    setPokemonList(shuffle(pokemonList))
+    
+    async function animateCards(pokemon) {
+      setLastClick(pokemon)
+      await wait(600)
+      setLastClick(null)
+      setIsSlidingOut(true)
+      await wait(1000)
+      setPokemonList(shuffle(pokemonList))
+      setIsSlidingOut(false)
+      setIsSlidingIn(true)
+      await wait(1000)
+      setIsSlidingIn(false)
+    }
+    animateCards(pokemon)
   }
 
-  function onResetGame() {
+  async function onResetGame() {
+    setIsSlidingOut(true)
+    await wait(1000)
+    setIsSlidingOut(false)
     setScore(0)
     setCheckedCard([])
     setIsGameOver(false)
     setIsWinning(false)
-    setResetGame(!resetGame)
+    setLastClick(null)
+    setIsSlidingIn(true)
+    setResetGame(!resetGame) 
+    await wait(1000)
+    setIsSlidingIn(false)
   }
-  
+
   return (
     <>
     {!isStarted ? 
-    <Home onStartGame={onStartGame}/> :
+    <Home isVanishing={isVanishing} onStartGame={onStartGame}/> :
     <Game 
       isLoading={isLoading} 
       pokemonList={pokemonList} 
@@ -84,6 +115,9 @@ function App() {
       isWinning={isWinning}
       isGameOver={isGameOver}
       error={error}
+      lastClick={lastClick}
+      isSlidingOut={isSlidingOut}
+      isSlidingIn={isSlidingIn}
       /> }
     </>
   )

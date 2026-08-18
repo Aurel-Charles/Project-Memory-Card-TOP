@@ -1,12 +1,11 @@
-export function ResetButton({onResetGame}) {
+export function ResetButton({text, onResetGame}) {
     return (
-        <button onClick={onResetGame}>Reset Game</button>
+        <button onClick={onResetGame}>{text}</button>
     )
 }
 
-export function StartButton({onStartGame}) {
+export function StartButton({text, onStartGame}) {
     return (
-        <button onClick={onStartGame}>Start Game</button>
+        <button onClick={onStartGame}>{text}</button>
     )
 }
-

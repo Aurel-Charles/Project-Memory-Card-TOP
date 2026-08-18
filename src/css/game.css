@@ -1,0 +1,17 @@
+.game{
+    margin: 2rem 1rem 1rem 1rem;
+    display: grid;
+    grid-template-columns:  8fr 1fr;
+    grid-template-rows: 1fr 1fr;
+}
+
+.game > .counter, button {
+    grid-column: 2 / 3;
+}
+.game > .counter {
+    align-self: end;
+}
+.game > button {
+    align-self: start;
+    font-size: 1rem;
+}

@@ -1,0 +1,48 @@
+.home{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.home > img{
+  min-width: 20%;
+}
+
+.home > button{
+  padding: 0.3rem;
+  font-size: 3rem ;
+}
+
+
+.rules{
+   border: solid 1px var(--border);
+   padding: 1rem;
+   box-shadow: var(--shadow) ;
+   text-align: start;
+   background-color: aliceblue;
+}
+
+.rules > p{
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+
+.home.vanish {
+  animation: vanish 0.5s ease-out forwards;
+}
+
+.game.appear {
+  animation: appear 0.5s ease-in forwards;
+}
+
+@keyframes vanish {
+  0%   { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(0.9); }
+}
+
+@keyframes appear {
+  0%   { opacity: 0; transform: scale(0.9); }
+  100% { opacity: 1; transform: scale(1); }
+}

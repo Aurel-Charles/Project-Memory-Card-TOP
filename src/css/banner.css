@@ -1,0 +1,10 @@
+.banner > p{
+  font-size: 1.5rem ;
+  font-style: italic;
+}
+
+.banner{
+  display: flex;
+  align-items: end;
+  gap: 1rem;
+}

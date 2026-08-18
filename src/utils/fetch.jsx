@@ -1,12 +1,11 @@
-import random10 from "./random"
+import  {randomNum } from "./random"
 
 export async function fetchPokemons() {
-    console.log('fetchPokemons called')
     let data
     let error
     let isLoading
 
-    const numbers = random10()
+    const numbers = randomNum(10)
     const url =  'https://pokeapi.co/api/v2/pokemon/'
     
     try {
@@ -22,7 +21,6 @@ export async function fetchPokemons() {
 
         
     } catch (err) {
-        console.error(err.message);
         error = err
     }
     finally{
